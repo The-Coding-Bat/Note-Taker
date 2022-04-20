@@ -1,3 +1,5 @@
+
+// Require Modules
 const fs = require('fs');
 const path = require('path');
 const completeNotes = require('./db/db.json');
@@ -5,12 +7,16 @@ const completeNotes = require('./db/db.json');
 const express = require('express');
 const app = express();
 
+// Server Port
 const PORT = process.env.PORT || 3001;
 
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+
+// Link to files
 app.get('/api/notes', (req, res) => {
     res.json(completeNotes.slice(1));
 });
@@ -27,17 +33,20 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
+// Generate Note Function
 function generateNote(body, notesArray) {
     const note = body;
     if (!Array.isArray(notesArray))
         notesArray = [];
     
+    // Push Notes into the array in db.json
     if (notesArray.length === 0)
         notesArray.push(0);
 
     body.id = notesArray[0];
     notesArray[0]++;
 
+    // Write note to db.json array
     notesArray.push(note);
     fs.writeFileSync(
         path.join(__dirname, './db/db.json'),
@@ -46,6 +55,7 @@ function generateNote(body, notesArray) {
     return note;
 }
 
+// Function to delete note
 app.delete("/api/notes/:id", function(req, res){
         
     // Obtains id and converts to a string
